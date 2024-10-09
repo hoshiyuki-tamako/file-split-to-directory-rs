@@ -1,0 +1,24 @@
+[package]
+name = "file-split-to-directory-rs"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.89"
+clap = { version = "4.5.20", features = ["derive"] }
+human-sort = "0.2.2"
+itertools = "0.13.0"
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+enum_glob_use = "deny"
+pedantic = "deny"
+nursery = "deny"
+unwrap_used = "deny"
