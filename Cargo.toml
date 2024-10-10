@@ -6,8 +6,8 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.89"
 clap = { version = "4.5.20", features = ["derive"] }
-human-sort = "0.2.2"
 itertools = "0.13.0"
+natord = "1.0.9"
 
 [profile.release]
 strip = true
