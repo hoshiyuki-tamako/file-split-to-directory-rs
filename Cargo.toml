@@ -1,13 +1,24 @@
 [package]
-name = "file-split-to-directory-rs"
-version = "0.0.1"
+name = "file-split-to-directory"
+description = "split files to folders"
+version = "1.0.0"
 edition = "2021"
+license = "MIT"
+homepage = "https://github.com/hoshiyuki-tamako/file-split-to-directory-rs"
+repository = "https://github.com/hoshiyuki-tamako/file-split-to-directory-rs"
+keywords = ["file", "split", "directory"]
+categories = ["command-line-utilities", "filesystems"]
+readme = "readme.md"
 
 [dependencies]
 anyhow = "1.0.89"
 clap = { version = "4.5.20", features = ["derive"] }
 itertools = "0.13.0"
 natord = "1.0.9"
+
+[dev-dependencies]
+fake = "2.9.2"
+temp-file = "0.1.9"
 
 [profile.release]
 strip = true
