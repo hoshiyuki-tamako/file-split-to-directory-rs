@@ -7,7 +7,7 @@ license = "MIT"
 homepage = "https://github.com/hoshiyuki-tamako/file-split-to-directory-rs"
 repository = "https://github.com/hoshiyuki-tamako/file-split-to-directory-rs"
 keywords = ["file", "split", "directory"]
-categories = ["command-line-utilities", "filesystems"]
+categories = ["command-line-utilities", "filesystem"]
 readme = "readme.md"
 
 [dependencies]
