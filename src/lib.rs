@@ -199,9 +199,12 @@ mod tests {
             .unwrap()
             .execute()
             .unwrap();
-        let r: Vec<_> = fs::read_dir(tmp_dir.path()).unwrap().collect();
-        assert_eq!(r[0].as_ref().unwrap().file_name().to_string_lossy(), "a");
-        assert_eq!(r[1].as_ref().unwrap().file_name().to_string_lossy(), "b");
+        let r: Vec<_> = fs::read_dir(tmp_dir.path())
+            .unwrap()
+            .map(|f| f.unwrap().file_name().to_string_lossy().to_string())
+            .collect();
+        assert!(r.contains(&"a".to_string()));
+        assert!(r.contains(&"b".to_string()));
     }
 
     #[test]
@@ -214,9 +217,12 @@ mod tests {
             .unwrap()
             .execute()
             .unwrap();
-        let r: Vec<_> = fs::read_dir(tmp_dir.path()).unwrap().collect();
-        assert_eq!(r[0].as_ref().unwrap().file_name().to_string_lossy(), "0");
-        assert_eq!(r[1].as_ref().unwrap().file_name().to_string_lossy(), "1");
+        let r = fs::read_dir(tmp_dir.path())
+            .unwrap()
+            .map(|f| f.unwrap().file_name().to_string_lossy().to_string())
+            .collect::<Vec<_>>();
+        assert!(r.contains(&"0".to_string()));
+        assert!(r.contains(&"1".to_string()));
 
         let r: Vec<_> = fs::read_dir(tmp_dir.path()).unwrap().collect();
         let first_directory_files = fs::read_dir(r[0].as_ref().unwrap().path())
