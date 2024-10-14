@@ -173,17 +173,17 @@ mod tests {
             .execute()
             .unwrap();
         let r: Vec<_> = fs::read_dir(tmp_dir.path()).unwrap().collect();
-        let first_directory_files = fs::read_dir(r[0].as_ref().unwrap().path())
+        let first_directory_files: Vec<_> = fs::read_dir(r[0].as_ref().unwrap().path())
             .unwrap()
             .map(|f| f.unwrap().file_name().to_string_lossy().to_string())
-            .collect::<Vec<_>>();
+            .collect();
         assert!(first_directory_files.contains(&"2.tmp".to_string()));
         assert!(first_directory_files.contains(&"3.tmp".to_string()));
 
-        let second_directory_files = fs::read_dir(r[1].as_ref().unwrap().path())
+        let second_directory_files: Vec<_> = fs::read_dir(r[1].as_ref().unwrap().path())
             .unwrap()
             .map(|f| f.unwrap().file_name().to_string_lossy().to_string())
-            .collect::<Vec<_>>();
+            .collect();
         assert!(second_directory_files.contains(&"0.tmp".to_string()));
         assert!(second_directory_files.contains(&"1.tmp".to_string()));
     }
@@ -217,10 +217,10 @@ mod tests {
             .unwrap()
             .execute()
             .unwrap();
-        let r = fs::read_dir(tmp_dir.path())
+        let r: Vec<_> = fs::read_dir(tmp_dir.path())
             .unwrap()
             .map(|f| f.unwrap().file_name().to_string_lossy().to_string())
-            .collect::<Vec<_>>();
+            .collect();
         assert!(r.contains(&"0".to_string()));
         assert!(r.contains(&"1".to_string()));
 
@@ -232,10 +232,10 @@ mod tests {
         assert!(first_directory_files.contains(&"0.tmp".to_string()));
         assert!(first_directory_files.contains(&"1.tmp".to_string()));
 
-        let second_directory_files = fs::read_dir(r[1].as_ref().unwrap().path())
+        let second_directory_files: Vec<_> = fs::read_dir(r[1].as_ref().unwrap().path())
             .unwrap()
             .map(|f| f.unwrap().file_name().to_string_lossy().to_string())
-            .collect::<Vec<_>>();
+            .collect();
         assert!(second_directory_files.contains(&"2.tmp".to_string()));
         assert!(second_directory_files.contains(&"3.tmp".to_string()));
     }
