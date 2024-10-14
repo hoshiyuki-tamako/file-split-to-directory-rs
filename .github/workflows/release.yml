@@ -3,27 +3,6 @@ on:
     tags:
       - "v*"
 jobs:
-  release:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target:
-          [
-            x86_64-pc-windows-gnu,
-            x86_64-unknown-linux-musl,
-            x86_64-apple-darwin,
-          ]
-
-    steps:
-      - uses: actions/checkout@master
-      - name: Compile and release
-        uses: rust-build/rust-build.action@v1.4.5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TOOLCHAIN_VERSION: 1.81
-        with:
-          RUSTTARGET: ${{ matrix.target }}
-
   publish:
     runs-on: ubuntu-latest
     steps:
