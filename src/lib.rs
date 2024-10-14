@@ -175,14 +175,14 @@ mod tests {
         let r: Vec<_> = fs::read_dir(tmp_dir.path()).unwrap().collect();
         let first_directory_files = fs::read_dir(r[0].as_ref().unwrap().path())
             .unwrap()
-            .map(|f| f.unwrap().file_name().into_string().unwrap())
+            .map(|f| f.unwrap().file_name().to_string_lossy().to_string())
             .collect::<Vec<_>>();
         assert!(first_directory_files.contains(&"2.tmp".to_string()));
         assert!(first_directory_files.contains(&"3.tmp".to_string()));
 
         let second_directory_files = fs::read_dir(r[1].as_ref().unwrap().path())
             .unwrap()
-            .map(|f| f.unwrap().file_name().into_string().unwrap())
+            .map(|f| f.unwrap().file_name().to_string_lossy().to_string())
             .collect::<Vec<_>>();
         assert!(second_directory_files.contains(&"0.tmp".to_string()));
         assert!(second_directory_files.contains(&"1.tmp".to_string()));
@@ -227,14 +227,14 @@ mod tests {
         let r: Vec<_> = fs::read_dir(tmp_dir.path()).unwrap().collect();
         let first_directory_files = fs::read_dir(r[0].as_ref().unwrap().path())
             .unwrap()
-            .map(|f| f.unwrap().file_name().into_string().unwrap())
+            .map(|f| f.unwrap().file_name().to_string_lossy().to_string())
             .collect::<Vec<_>>();
         assert!(first_directory_files.contains(&"0.tmp".to_string()));
         assert!(first_directory_files.contains(&"1.tmp".to_string()));
 
         let second_directory_files = fs::read_dir(r[1].as_ref().unwrap().path())
             .unwrap()
-            .map(|f| f.unwrap().file_name().into_string().unwrap())
+            .map(|f| f.unwrap().file_name().to_string_lossy().to_string())
             .collect::<Vec<_>>();
         assert!(second_directory_files.contains(&"2.tmp".to_string()));
         assert!(second_directory_files.contains(&"3.tmp".to_string()));
