@@ -20,7 +20,7 @@ jobs:
         uses: rust-build/rust-build.action@v1.4.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TOOLCHAIN_VERSION: 1.79
+          TOOLCHAIN_VERSION: 1.81
         with:
           RUSTTARGET: ${{ matrix.target }}
 
