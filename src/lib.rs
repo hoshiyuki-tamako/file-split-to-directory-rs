@@ -3,7 +3,7 @@ use std::fs::{self, DirEntry};
 use std::num::NonZeroUsize;
 use std::path::PathBuf;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FileSplitToDirectory {
     path: PathBuf,
     chunk: NonZeroUsize,
@@ -27,7 +27,7 @@ impl FileSplitToDirectory {
 
         for (i, chunk) in chunks.into_iter().enumerate() {
             let target_root = self.path.join((self.directory_name)(i));
-            if !target_root.exists() {
+            if !target_root.is_dir() {
                 fs::create_dir(&target_root)?;
             }
 
@@ -114,6 +114,16 @@ impl Default for FileSplitToDirectoryBuilder {
 mod tests {
     use super::*;
     use fake::{Fake, Faker};
+    use fs::File;
+    use temp_dir::TempDir;
+
+    fn create_tmpfile(howmany: usize) -> TempDir {
+        let d = TempDir::new().unwrap();
+        for i in 0..howmany {
+            File::create(d.path().join(format!("{i}.tmp"))).unwrap();
+        }
+        d
+    }
 
     #[test]
     fn test_default() {
@@ -145,18 +155,82 @@ mod tests {
         assert_eq!(builder.chunk, chunk);
     }
 
-    // #[test]
-    // fn test_with_sort_cmp() {
-    //     todo!()
-    // }
+    #[test]
+    fn test_with_sort_cmp() {
+        let tmp_dir = create_tmpfile(4);
+        FileSplitToDirectoryBuilder::default()
+            .with_path(tmp_dir.path().to_path_buf())
+            .with_chunk(2.try_into().unwrap())
+            .with_sort_cmp(|a: &DirEntry, b: &DirEntry| {
+                a.file_name()
+                    .into_string()
+                    .unwrap()
+                    .cmp(&b.file_name().into_string().unwrap())
+                    .reverse()
+            })
+            .build()
+            .unwrap()
+            .execute()
+            .unwrap();
+        let r: Vec<_> = fs::read_dir(tmp_dir.path()).unwrap().collect();
+        let first_directory_files = fs::read_dir(r[0].as_ref().unwrap().path())
+            .unwrap()
+            .map(|f| f.unwrap().file_name().into_string().unwrap())
+            .collect::<Vec<_>>();
+        assert!(first_directory_files.contains(&"2.tmp".to_string()));
+        assert!(first_directory_files.contains(&"3.tmp".to_string()));
 
-    // #[test]
-    // fn test_with_directory_name() {
-    //     todo!()
-    // }
+        let second_directory_files = fs::read_dir(r[1].as_ref().unwrap().path())
+            .unwrap()
+            .map(|f| f.unwrap().file_name().into_string().unwrap())
+            .collect::<Vec<_>>();
+        assert!(second_directory_files.contains(&"0.tmp".to_string()));
+        assert!(second_directory_files.contains(&"1.tmp".to_string()));
+    }
 
-    // #[test]
-    // fn test_execute() {
-    //     todo!()
-    // }
+    #[test]
+    fn test_with_directory_name() {
+        let tmp_dir = create_tmpfile(4);
+        FileSplitToDirectoryBuilder::default()
+            .with_path(tmp_dir.path().to_path_buf())
+            .with_chunk(2.try_into().unwrap())
+            .with_directory_name(|i: usize| (('a' as u8 + i as u8) as char).to_string())
+            .build()
+            .unwrap()
+            .execute()
+            .unwrap();
+        let r: Vec<_> = fs::read_dir(tmp_dir.path()).unwrap().collect();
+        assert_eq!(r[0].as_ref().unwrap().file_name().to_string_lossy(), "a");
+        assert_eq!(r[1].as_ref().unwrap().file_name().to_string_lossy(), "b");
+    }
+
+    #[test]
+    fn test_execute_default() {
+        let tmp_dir = create_tmpfile(4);
+        FileSplitToDirectoryBuilder::default()
+            .with_path(tmp_dir.path().to_path_buf())
+            .with_chunk(2.try_into().unwrap())
+            .build()
+            .unwrap()
+            .execute()
+            .unwrap();
+        let r: Vec<_> = fs::read_dir(tmp_dir.path()).unwrap().collect();
+        assert_eq!(r[0].as_ref().unwrap().file_name().to_string_lossy(), "0");
+        assert_eq!(r[1].as_ref().unwrap().file_name().to_string_lossy(), "1");
+
+        let r: Vec<_> = fs::read_dir(tmp_dir.path()).unwrap().collect();
+        let first_directory_files = fs::read_dir(r[0].as_ref().unwrap().path())
+            .unwrap()
+            .map(|f| f.unwrap().file_name().into_string().unwrap())
+            .collect::<Vec<_>>();
+        assert!(first_directory_files.contains(&"0.tmp".to_string()));
+        assert!(first_directory_files.contains(&"1.tmp".to_string()));
+
+        let second_directory_files = fs::read_dir(r[1].as_ref().unwrap().path())
+            .unwrap()
+            .map(|f| f.unwrap().file_name().into_string().unwrap())
+            .collect::<Vec<_>>();
+        assert!(second_directory_files.contains(&"2.tmp".to_string()));
+        assert!(second_directory_files.contains(&"3.tmp".to_string()));
+    }
 }
